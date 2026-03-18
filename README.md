@@ -1,14 +1,132 @@
-Inferon/
+# LLM Infra Platform
+
+A production-oriented LLM infrastructure platform designed to serve multiple applications with scalable inference, optimization, and observability.
+
+---
+
+## 🚀 Overview
+
+This project simulates a real-world **LLM infrastructure layer** used in modern enterprises.
+
+Instead of building a single AI application, this platform acts as a **centralized service** that multiple downstream applications can rely on for:
+
+* LLM inference
+* request optimization (caching, batching)
+* latency and performance tracking
+* unified deployment and monitoring
+
+---
+
+## 🎯 Problem It Solves
+
+In production environments, directly integrating LLMs into each application leads to:
+
+* duplicated logic across teams
+* high and uncontrolled API costs
+* poor latency under load
+* lack of observability
+* no centralized governance
+
+This platform addresses these challenges by introducing a **shared LLM infrastructure layer**.
+
+---
+
+## 🏗 Architecture
+
+```
+Clients (Apps)
+   │
+   ├── App A
+   ├── App B
+   └── App C
+        │
+        ▼
+LLM Infra Platform (this project)
+        │
+        ├── API Layer (FastAPI)
+        ├── Orchestration Layer
+        ├── Inference Layer
+        ├── Optimization Layer (Cache, Batching)
+        └── Observability & MLOps
+        │
+        ▼
+LLM Provider / Model Backend
+```
+
+---
+
+## 📦 Project Structure
+
+```
+llm-infra-platform/
 │
 ├── app/
-│   ├── api/              # FastAPI 接口层
-│   ├── core/             # 配置、日志、工具
-│   ├── services/         # LLM 调用逻辑
-│   ├── cache/            # Redis 相关
-│   └── models/           # 数据结构
+│   ├── api/                # FastAPI routes (entry point)
+│   ├── core/               # config, logging, utilities
+│   ├── services/           # LLM interaction logic
+│   ├── cache/              # caching layer (Redis)
+│   └── models/             # request/response schemas
 │
-├── tests/
-├── docker/
-├── .github/workflows/
-├── docker-compose.yml
+├── tests/                  # unit & integration tests
+│
+├── docker/                 # Docker-related configs
+│
+├── .github/workflows/      # CI/CD pipelines
+│
+├── docker-compose.yml      # local orchestration (app + Redis)
+│
 └── README.md
+```
+
+---
+
+## ⚙️ Key Features (Planned)
+
+* ✅ Unified LLM API service
+* ✅ Async request handling
+* ✅ Response caching (Redis)
+* ⏳ Request batching (planned)
+* ⏳ Latency & metrics tracking
+* ⏳ CI/CD pipeline
+* ⏳ Model backend abstraction (OpenAI / local / vLLM)
+
+---
+
+## 🧠 Design Principles
+
+* **Separation of concerns** (API vs model logic vs infra)
+* **Pluggable model backend**
+* **Scalable architecture**
+* **Production-first mindset**
+
+---
+
+## 🛠 Tech Stack
+
+* FastAPI
+* Python (async)
+* Redis
+* Docker / Docker Compose
+* (Planned) MLflow, CI/CD
+
+---
+
+## 📌 Future Work
+
+* vLLM integration for high-performance inference
+* distributed processing (optional)
+* multi-tenant support
+* observability dashboard
+* cost tracking & optimization
+
+---
+
+## 📖 Why This Project?
+
+This project covers topics of:
+
+* ML Infrastructure Engineering
+* AI Platform Engineering
+* MLOps & Production AI Systems
+
+---
