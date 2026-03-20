@@ -4,7 +4,7 @@ import time
 from app.services.llm_service import generate_response
 from app.core.logging import logger
 
-app = FastAPI(title = "Inferon Platform", description = "LLM Infra Platform", version = "1.0.0")
+app = FastAPI(title = "Inferon", description = "LLM Infra Platform", version = "1.0.0")
 
 # ------------ Request Schema ------------
 class GenerateRequest(BaseModel):
