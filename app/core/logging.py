@@ -9,7 +9,6 @@ class JsonFormatter(logging.Formatter):
             "level": record.levelname,
         }
 
-        # 👇 核心升级点
         if isinstance(record.msg, dict):
             base.update(record.msg)
         else:
