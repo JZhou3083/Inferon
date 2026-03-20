@@ -2,11 +2,12 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import time 
 from app.services.llm_service import generate_response
+from app.core.logging import logger
 
-app = FastAPI(title = "Inferon Platform", description = "LLM Infra Platform", version = "1.0.0")
+app = FastAPI(title = "Inferon", description = "LLM Infra Platform", version = "1.0.0")
 
 # ------------ Request Schema ------------
-class GenreateRequest(BaseModel):
+class GenerateRequest(BaseModel):
     prompt: str
 
 # ------------ Health Check ------------
@@ -16,13 +17,23 @@ async def health_check():
 
 # ------------ Generate Endpoint ------------
 @app.post("/generate")
-async def generate(request: GenreateRequest):
+async def generate(request: GenerateRequest):
     start_time = time.time()
-    response = await generate_response(request.prompt)
-    end_time = time.time()
-    latency = end_time - start_time
+
+    response,cache_hit = await generate_response(request.prompt)
+
+    latency = time.time() - start_time
+
+    logger.info({
+        "event": "generate",
+        "prompt": request.prompt,
+        "response": response,
+        "latency": latency,
+        "cache_hit": cache_hit
+    })
 
     return {
         "response": response,
-        "latency": latency
+        "latency": latency,
+        "cache_hit": cache_hit
     }
