@@ -128,5 +128,8 @@ This project covers topics of:
 * ML Infrastructure Engineering
 * AI Platform Engineering
 * MLOps & Production AI Systems
-
 ---
+
+How to Run& Stop both redis and app services: 
+* 'docker compose up --build -d'
+* 'docker compose down'
