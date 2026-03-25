@@ -130,6 +130,9 @@ This project covers topics of:
 * MLOps & Production AI Systems
 ---
 
+## Current logs
 How to Run& Stop both redis and app services: 
 * 'docker compose up --build -d'
 * 'docker compose down'
+
+cache → logging → metrics → tracing → scaling → AI（LLM integration / RAG / agent）
