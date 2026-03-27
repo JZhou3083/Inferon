@@ -3,6 +3,14 @@ from pydantic import BaseModel
 import time 
 from app.services.llm_service import generate_response
 from app.core.logging import logger
+from app.metrics.metrics import (
+    REQUEST_COUNTER,
+    REQUEST_LATENCY,
+    CACHE_HIT,
+    CACHE_MISS
+)
+from prometheus_client import generate_latest
+from fastapi.responses import Response
 
 app = FastAPI(title = "Inferon", description = "LLM Infra Platform", version = "1.0.0")
 
@@ -18,22 +26,28 @@ async def health_check():
 # ------------ Generate Endpoint ------------
 @app.post("/generate")
 async def generate(request: GenerateRequest):
-    start_time = time.time()
+    REQUEST_COUNTER.inc()
 
-    response,cache_hit = await generate_response(request.prompt)
+    with REQUEST_LATENCY.time():
+        response, cache_hit = await generate_response(request.prompt)
 
-    latency = time.time() - start_time
+    if cache_hit:
+        CACHE_HIT.inc()
+    else:
+        CACHE_MISS.inc()
 
     logger.info({
         "event": "generate",
         "prompt": request.prompt,
         "response": response,
-        "latency": latency,
         "cache_hit": cache_hit
     })
 
     return {
         "response": response,
-        "latency": latency,
         "cache_hit": cache_hit
     }
+
+@app.get("/metrics")
+def metrics():
+    return Response(generate_latest(), media_type="text/plain")

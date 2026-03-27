@@ -64,6 +64,7 @@ llm-infra-platform/
 │   ├── api/                # FastAPI routes (entry point)
 │   ├── core/               # config, logging, utilities
 │   ├── services/           # LLM interaction logic
+│   ├── metrics/            # Observability metrics 
 │   ├── cache/              # caching layer (Redis)
 │   └── models/             # request/response schemas
 │
@@ -85,8 +86,8 @@ llm-infra-platform/
 * ✅ Unified LLM API service
 * ✅ Async request handling
 * ✅ Response caching (Redis)
+* ✅ Latency & metrics tracking
 * ⏳ Request batching (planned)
-* ⏳ Latency & metrics tracking
 * ⏳ CI/CD pipeline
 * ⏳ Model backend abstraction (OpenAI / local / vLLM)
 
