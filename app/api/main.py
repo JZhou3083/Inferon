@@ -27,18 +27,18 @@ async def health_check():
 # ------------ Generate Endpoint ------------
 @app.post("/generate")
 async def generate(request: GenerateRequest, http_request: Request):
+    trace_id = http_request.state.trace_id
     start_time = time.time()
 
     REQUEST_COUNTER.inc()
 
     with REQUEST_LATENCY.time():
-        response, cache_hit = await generate_response(request.prompt)
+        response, cache_hit = await generate_response(request.prompt,trace_id= trace_id)
     latency = time.time() - start_time
     if cache_hit:
         CACHE_HIT.inc()
     else:
         CACHE_MISS.inc()
-    trace_id = http_request.state.trace_id
     logger.info({
         "trace_id": trace_id,
         "event": "generate",
@@ -63,7 +63,6 @@ async def add_trace_id(request: Request, call_next):
 
     # 挂到 request 上（全链路用）
     request.state.trace_id = trace_id
-
     response = await call_next(request)
 
     # 返回给客户端（很重要）
