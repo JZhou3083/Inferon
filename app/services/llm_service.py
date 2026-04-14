@@ -2,7 +2,7 @@ import asyncio
 from app.cache.redis_cache import get_cache, set_cache
 from app.core.logging import logger
 from openai import OpenAI
-from functools import partial
+
 client = OpenAI(base_url="https://api.deepseek.com")
 
 def build_cache_key(prompt: str) -> str:

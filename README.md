@@ -87,10 +87,10 @@ llm-infra-platform/
 * ✅ Async request handling
 * ✅ Response caching (Redis)
 * ✅ Latency & metrics tracking
-* ⏳ Model backend abstraction (OpenAI / local / vLLM)
+* ✅ LLM model Integration
 * ⏳ Request batching (planned)
-* ⏳ CI/CD pipeline
-
+* ⏳ vLLM & LMcache
+* ⏳ Model backend abstraction (OpenAI / local / vLLM)
 
 ---
 
