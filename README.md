@@ -67,20 +67,6 @@ llm-infra-platform/
 
 ---
 
-## ⚙️ Key Features (Planned)
-
-* ✅ Unified LLM API service
-* ✅ Async request handling
-* ✅ Response caching (Redis)
-* ✅ Latency & metrics tracking
-* ✅ LLM model Integration
-* ⏳ Request batching (planned)
-* ⏳ vLLM & LMcache
-* ⏳ Model backend abstraction (OpenAI / local / vLLM)
-
-
----
-
 ## ⚙️ Key Features
 
 ### Implemented
