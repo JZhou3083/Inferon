@@ -6,28 +6,14 @@ A production-oriented LLM infrastructure platform designed to serve multiple app
 
 ## 🚀 Overview
 
-This project simulates a real-world **LLM infrastructure layer** used in modern enterprises.
+This project implements a **modular LLM infrastructure layer** inspired by production systems used in modern AI companies.
 
-Instead of building a single AI application, this platform acts as a **centralized service** that multiple downstream applications can rely on for:
+It is designed to serve as a shared backend for multiple applications requiring:
 
-* LLM inference
-* request optimization (caching, batching)
-* latency and performance tracking
-* unified deployment and monitoring
-
----
-
-## 🎯 Problem It Solves
-
-In production environments, directly integrating LLMs into each application leads to:
-
-* duplicated logic across teams
-* high and uncontrolled API costs
-* poor latency under load
-* lack of observability
-* no centralized governance
-
-This platform addresses these challenges by introducing a **shared LLM infrastructure layer**.
+- LLM inference
+- request optimization (caching, batching)
+- observability (metrics, logging)
+- scalable serving architecture (future)
 
 ---
 
@@ -44,13 +30,13 @@ Clients (Apps)
 LLM Infra Platform (this project)
         │
         ├── API Layer (FastAPI)
-        ├── Orchestration Layer
+        ├── Observability Layer(logging, metrics)
+        ├── Optimization Layer (cache, batching)
         ├── Inference Layer
-        ├── Optimization Layer (Cache, Batching)
-        └── Observability & MLOps
+        └── Future: Agent + Distributed Layer 
         │
         ▼
-LLM Provider / Model Backend
+LLM Provider (OpenAI/local/vLLM)
 ```
 
 ---
@@ -92,49 +78,62 @@ llm-infra-platform/
 * ⏳ vLLM & LMcache
 * ⏳ Model backend abstraction (OpenAI / local / vLLM)
 
+
+---
+
+## ⚙️ Key Features
+
+### Implemented
+- FastAPI LLM service
+- Redis caching layer
+- Structured logging with trace_id
+- Metrics (latency, cache hit/miss)
+- Dockerized local environment
+
+### In Progress
+- Request tracing (context propagation)
+- Batching prototype (static batching)
+
+### Planned
+- Continuous batching (vLLM-style scheduler)
+- Agentic execution layer (SGLang-style)
+- Distributed inference (Ray)
+- External KV cache (LMCache)
+
 ---
 
 ## 🧠 Design Principles
 
-* **Separation of concerns** (API vs model logic vs infra)
-* **Pluggable model backend**
-* **Scalable architecture**
-* **Production-first mindset**
+- Separation of concerns (API / infra / inference)
+- Observable-by-default (metrics + logging)
+- Pluggable model backend
+- Scalable system design mindset
 
 ---
 
 ## 🛠 Tech Stack
 
-* FastAPI
-* Python (async)
-* Redis
-* Docker / Docker Compose
-* (Planned) MLflow, CI/CD
-
----
-
-## 📌 Future Work
-
-* vLLM integration for high-performance inference
-* distributed processing (optional)
-* multi-tenant support
-* observability dashboard
-* cost tracking & optimization
+- FastAPI
+- Python (async)
+- Redis
+- Docker / Docker Compose
+- Prometheus metrics
 
 ---
 
 ## 📖 Why This Project?
 
-This project covers topics of:
+This project explores real-world topics in:
 
-* ML Infrastructure Engineering
-* AI Platform Engineering
-* MLOps & Production AI Systems
+- LLM Infrastructure Engineering
+- AI Platform Design
+- MLOps systems
+- Scalable inference architectures
+
 ---
 
-## Current logs
-How to Run& Stop both redis and app services: 
-* 'docker compose up --build -d'
-* 'docker compose down'
+## 🚀 How to Run
 
-cache → logging → metrics → tracing → scaling → AI（LLM integration / RAG / agent）
+```bash
+docker compose up --build -d
+docker compose down
