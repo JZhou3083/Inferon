@@ -7,8 +7,8 @@ redis_client = redis.Redis(host="redis", port=6379, db=0)
 
 def get_cache(key:str):
     data = redis_client.get(key)
-    if data:
-        return json.loads(data)
+    if isinstance(data, bytes):
+        return json.loads(data.decode('utf-8'))
     return None
 
 def set_cache(key:str, value,ttl:int =300):

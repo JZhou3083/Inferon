@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 import uuid
 from pydantic import BaseModel
 import time 
+from app.schemas.api import GenerateRequest, GenerateResponse
 from app.services.llm_service import generate_response
 from app.core.logging import logger
 from app.metrics.metrics import (
@@ -15,17 +16,13 @@ from fastapi.responses import Response
 
 app = FastAPI(title = "Inferon", description = "LLM Infra Platform", version = "1.0.0")
 
-# ------------ Request Schema ------------
-class GenerateRequest(BaseModel):
-    prompt: str
-
 # ------------ Health Check ------------
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
 
 # ------------ Generate Endpoint ------------
-@app.post("/generate")
+@app.post("/generate", response_model=GenerateResponse)
 async def generate(request: GenerateRequest, http_request: Request):
     trace_id = http_request.state.trace_id
     start_time = time.time()
@@ -33,9 +30,9 @@ async def generate(request: GenerateRequest, http_request: Request):
     REQUEST_COUNTER.inc()
 
     with REQUEST_LATENCY.time():
-        response, cache_hit = await generate_response(request.prompt,trace_id= trace_id)
+        result = await generate_response(request.prompt,trace_id= trace_id)
     latency = time.time() - start_time
-    if cache_hit:
+    if result.cache_hit:
         CACHE_HIT.inc()
     else:
         CACHE_MISS.inc()
@@ -43,15 +40,15 @@ async def generate(request: GenerateRequest, http_request: Request):
         "trace_id": trace_id,
         "event": "generate",
         "prompt": request.prompt,
-        "response": response,
+        "response": result.text,
         "latency": latency,
-        "cache_hit": cache_hit
+        "cache_hit": result.cache_hit
     })
 
-    return {
-        "response": response,
-        "cache_hit": cache_hit
-    }
+    return GenerateResponse(
+        response=result.text,
+        cache_hit=result.cache_hit
+    )
 
 @app.get("/metrics")
 def metrics():
