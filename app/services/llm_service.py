@@ -1,4 +1,5 @@
 import asyncio
+import time
 from app.cache.redis_cache import get_cache, set_cache
 from app.schemas.llm import LLMRequest, LLMResult
 from app.core.logging import logger
@@ -18,72 +19,55 @@ async def generate_response(prompt: str, trace_id: str) -> LLMResult:
         logger.info({
             "trace_id": trace_id,
             "event": "cache_hit",
-            "cache_key": cache_key
+            "cache_key": cache_key[-8:]
         })
         return LLMResult(text=cached, cache_hit=True)
     # 🔹 2. cache miss
     logger.info({
         "trace_id": trace_id,
         "event": "cache_miss",
-        "cache_key": cache_key
+        "cache_key": cache_key[-8:]
     })
 
-    # 🔹 3. LLM call start
-    logger.info({
-        "trace_id": trace_id,
-        "event": "llm_call_start",
-        "prompt": prompt
-    })
     max_retries = 3
     timeout_seconds = 10
+    llm_start = time.time()
+
+    response = None
+    last_error = None
 
     for attempt in range(max_retries):
         try:
-            logger.info({
-                "trace_id": trace_id,
-                "event": "llm.call_attempt",
-                "attempt": attempt + 1
-            })
-
             response = await asyncio.wait_for(
                 asyncio.to_thread(
                     client.chat.completions.create,
                     model="deepseek-chat",
-                    messages=[
-                        {"role": "user", "content": prompt}
-                    ]
+                    messages=[{"role": "user", "content": prompt}]
                 ),
                 timeout=timeout_seconds
             )
-
-            break  # 成功就退出 loop
-
-        except asyncio.TimeoutError:
-            logger.warning({
-                "trace_id": trace_id,
-                "event": "llm.timeout",
-                "attempt": attempt + 1
-            })
+            break
 
         except Exception as e:
-            logger.warning({
-                "trace_id": trace_id,
-                "event": "llm.error",
-                "error": str(e),
-                "attempt": attempt + 1
-            })
+            last_error = e
+            await asyncio.sleep(1)
 
-        # 如果还没成功，稍微等一下再 retry
-        await asyncio.sleep(1)
-
-    else:
-        # 所有 retry 都失败
+    if response is None:
+        logger.warning({
+            "trace_id": trace_id,
+            "event": "llm_failed",
+            "error": str(last_error)
+        })
         raise Exception("LLM call failed after retries")
+
     output = response.choices[0].message.content
 
     logger.info({
         "trace_id": trace_id,
-        "event": "llm_call_end"
+        "event": "llm_success",
+        "llm_latency": time.time() - llm_start,
+        "response_len": len(output),
+        "attempts": attempt + 1
     })
 
     set_cache(cache_key, output)
