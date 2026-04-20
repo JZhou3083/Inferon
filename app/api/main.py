@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Request
 import uuid
-from pydantic import BaseModel
 import time 
 from app.schemas.api import GenerateRequest, GenerateResponse
 from app.services.llm_service import generate_response
