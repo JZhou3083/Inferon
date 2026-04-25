@@ -3,14 +3,17 @@ import time
 from app.cache.redis_cache import get_cache, set_cache
 from app.schemas.llm import LLMRequest, LLMResult
 from app.core.logging import logger
-from openai import OpenAI
+from openai import openai
 
-client = OpenAI(base_url="https://api.deepseek.com")
+client = openai(base_url="https://api.deepseek.com")
 
 def build_cache_key(prompt: str) -> str:
     return f"llm:{prompt}"
 
-async def generate_response(prompt: str, trace_id: str) -> LLMResult:
+async def generate_response(request: LLMRequest) -> LLMResult:
+    prompt = request.prompt
+    trace_id = request.trace_id
+
     # Check if the response is already cached
     cache_key = build_cache_key(prompt)
 
@@ -30,7 +33,7 @@ async def generate_response(prompt: str, trace_id: str) -> LLMResult:
     })
 
     max_retries = 3
-    timeout_seconds = 10
+    timeout_seconds = 20
     llm_start = time.time()
 
     response = None
@@ -39,8 +42,7 @@ async def generate_response(prompt: str, trace_id: str) -> LLMResult:
     for attempt in range(max_retries):
         try:
             response = await asyncio.wait_for(
-                asyncio.to_thread(
-                    client.chat.completions.create,
+                client.chat.completions.create(
                     model="deepseek-chat",
                     messages=[{"role": "user", "content": prompt}]
                 ),
@@ -56,7 +58,7 @@ async def generate_response(prompt: str, trace_id: str) -> LLMResult:
         logger.warning({
             "trace_id": trace_id,
             "event": "llm_failed",
-            "error": str(last_error)
+            "error": repr(last_error)
         })
         raise Exception("LLM call failed after retries")
 
