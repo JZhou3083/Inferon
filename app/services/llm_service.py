@@ -3,9 +3,9 @@ import time
 from app.cache.redis_cache import get_cache, set_cache
 from app.schemas.llm import LLMRequest, LLMResult
 from app.core.logging import logger
-from openai import openai
+from openai import AsyncOpenAI
 
-client = openai(base_url="https://api.deepseek.com")
+client = AsyncOpenAI(base_url="https://api.deepseek.com")
 
 def build_cache_key(prompt: str) -> str:
     return f"llm:{prompt}"
@@ -13,7 +13,7 @@ def build_cache_key(prompt: str) -> str:
 async def generate_response(request: LLMRequest) -> LLMResult:
     prompt = request.prompt
     trace_id = request.trace_id
-
+    
     # Check if the response is already cached
     cache_key = build_cache_key(prompt)
 
