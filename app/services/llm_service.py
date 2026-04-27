@@ -1,19 +1,19 @@
 import asyncio
 import time
+import hashlib
 from app.cache.redis_cache import get_cache, set_cache
 from app.schemas.llm import LLMRequest, LLMResult
 from app.core.logging import logger
 from openai import AsyncOpenAI
 
 client = AsyncOpenAI(base_url="https://api.deepseek.com")
+semaphore = asyncio.Semaphore(5)
 
 def build_cache_key(prompt: str) -> str:
-    return f"llm:{prompt}"
+    hashed = hashlib.sha256(prompt.encode()).hexdigest()
+    return f"llm:{hashed}"
 
-async def generate_response(request: LLMRequest) -> LLMResult:
-    prompt = request.prompt
-    trace_id = request.trace_id
-    
+async def generate_response(prompt: str, trace_id: str) -> LLMResult:
     # Check if the response is already cached
     cache_key = build_cache_key(prompt)
 
@@ -38,21 +38,23 @@ async def generate_response(request: LLMRequest) -> LLMResult:
 
     response = None
     last_error = None
-
+    
     for attempt in range(max_retries):
         try:
-            response = await asyncio.wait_for(
-                client.chat.completions.create(
-                    model="deepseek-chat",
-                    messages=[{"role": "user", "content": prompt}]
-                ),
-                timeout=timeout_seconds
-            )
+            async with semaphore:
+                response = await asyncio.wait_for(
+                    client.chat.completions.create(
+                        model="deepseek-chat",
+                        messages=[{"role": "user", "content": prompt}],
+                        max_tokens=2048,
+                    ),
+                    timeout=timeout_seconds
+                )
             break
 
         except Exception as e:
             last_error = e
-            await asyncio.sleep(1)
+            await asyncio.sleep(2 ** attempt)
 
     if response is None:
         logger.warning({
