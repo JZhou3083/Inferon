@@ -40,6 +40,7 @@ async def generate_response(prompt: str, trace_id: str) -> LLMResult:
     last_error = None
     
     for attempt in range(max_retries):
+        #todo: retries and semaphore should be handled in a more elegant way, maybe using a library like tenacity or backoff
         try:
             async with semaphore:
                 response = await asyncio.wait_for(
@@ -54,7 +55,9 @@ async def generate_response(prompt: str, trace_id: str) -> LLMResult:
 
         except Exception as e:
             last_error = e
-            await asyncio.sleep(2 ** attempt)
+            if attempt == max_retries - 1:
+                break
+            await asyncio.sleep(min(2 ** attempt, 8))
 
     if response is None:
         logger.warning({
