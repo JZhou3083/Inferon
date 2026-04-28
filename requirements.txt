@@ -3,3 +3,4 @@ uvicorn
 redis
 prometheus-client
 openai
+tenacity
