@@ -13,7 +13,7 @@ from tenacity import (
 from app.cache.redis_cache import get_cache, set_cache
 from app.schemas.llm import LLMResult
 from app.core.logging import logger
-
+from app.services.in_flight import get_or_create
 
 # =========================================================
 # CONFIG / GLOBALS
@@ -121,9 +121,17 @@ async def generate_response(prompt: str, trace_id: str) -> LLMResult:
         "event": "cache_miss",
         "cache_key": cache_key[-8:]
     })
-
     # -------------------------
-    # 2. LLM CALL
+    # 2. IN-FLIGHT CHECK (PLACEHOLDER)
+    # TODO: Implement in-flight request deduplication to prevent thundering herd on cache miss
+    # -------------------------
+    future = await get_or_create(cache_key)
+
+    if future.done():
+        output = future.result()
+        return LLMResult(text=output, cache_hit=False)
+    # -------------------------
+    # 3. LLM CALL
     # -------------------------
     timeout_seconds = 20
     llm_start = time.time()
@@ -142,7 +150,7 @@ async def generate_response(prompt: str, trace_id: str) -> LLMResult:
     output = response.choices[0].message.content
 
     # -------------------------
-    # 3. METRICS LOGGING
+    # 4 METRICS LOGGING
     # -------------------------
     logger.info({
         "trace_id": trace_id,
