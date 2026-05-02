@@ -4,7 +4,6 @@ from typing import Any, Dict
 in_flight: Dict[str, asyncio.Future] = {}
 lock = asyncio.Lock()
 
-
 async def get_or_create(key: str):
     async with lock:
         if key in in_flight:
