@@ -1,13 +1,59 @@
-# Byte-compiled / optimized / DLL files
+# =========================
+# Python cache
+# =========================
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
 
-# virtual environments
+# =========================
+# Virtual environments
+# =========================
 venv/
 env/
 .venv/
 
+# =========================
+# Environment variables
+# =========================
 .env
+.env.*
 
-design-notes.md
+# =========================
+# IDE / editor
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Testing / cache
+# =========================
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# local artifacts
+outputs/
+runs/
+tmp/
+
+# =========================
+# Docker (optional safety)
+# =========================
+*.pid
+*.seed
+*.pid.lock
