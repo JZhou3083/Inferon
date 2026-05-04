@@ -31,7 +31,7 @@ LLM Infra Platform (this project)
         │
         ├── API Layer (FastAPI)
         ├── Observability Layer(logging, metrics)
-        ├── Optimization Layer (cache, batching)
+        ├── Optimization Layer (cache)
         ├── Inference Layer
         └── Future: Agent + Distributed Layer 
         │
@@ -48,11 +48,17 @@ llm-infra-platform/
 │
 ├── app/
 │   ├── api/                # FastAPI routes (entry point)
+        (main.py)
 │   ├── core/               # config, logging, utilities
+        (logging.py)
 │   ├── services/           # LLM interaction logic
+        (llm_service.py, in_flight.py)
 │   ├── metrics/            # Observability metrics 
+        (metrics.py)
 │   ├── cache/              # caching layer (Redis)
-│   └── models/             # request/response schemas
+        (redis_cache.py)
+│   └── schemas/             # request/response schemas
+        (api.py,llm_service.py)
 │
 ├── tests/                  # unit & integration tests
 │
@@ -123,3 +129,5 @@ This project explores real-world topics in:
 ```bash
 docker compose up --build -d
 docker compose down
+
+目前为止Inferon越来越靠近LiteLLM而不是vLLM（一个是服务模型的路由层，一个是推理runtime 层，接下来的思路是我应该往哪一层发展。还有个是Helicone专门observabilityu的项目也值得看一下。）
