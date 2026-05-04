@@ -130,4 +130,4 @@ This project explores real-world topics in:
 docker compose up --build -d
 docker compose down
 
-目前为止Inferon越来越靠近LiteLLM而不是vLLM（一个是服务模型的路由层，一个是推理runtime 层，接下来的思路是我应该往哪一层发展。还有个是Helicone专门observabilityu的项目也值得看一下。）
+Inferon其实是多模型多用户的协调曾，类似LiteLLM而不是vLLM（一个是服务模型的路由层，一个是推理runtime 层，接下来的思路是需要调整的。还有个是Helicone专门observabilityu的项目也值得看一下。）
