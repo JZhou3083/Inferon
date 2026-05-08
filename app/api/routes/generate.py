@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 import time
 
-from app.schemas.api import GenerateRequest, GenerateResponse
+from app.schemas.api.generate import GenerateRequest, GenerateResponse
 from app.services.llm_service import generate_response
 from app.core.logging import logger
 from app.metrics.metrics import (

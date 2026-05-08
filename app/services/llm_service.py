@@ -11,7 +11,7 @@ from tenacity import (
 )
 
 from app.cache.redis_cache import get_cache, set_cache
-from app.schemas.llm import LLMResult
+from app.schemas.internal.chat import LLMResult
 from app.core.logging import logger
 from app.services.in_flight import get_or_create
 
