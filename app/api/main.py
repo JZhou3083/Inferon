@@ -1,72 +1,19 @@
-from fastapi import FastAPI, Request
-import uuid
-import time 
-from app.schemas.api import GenerateRequest, GenerateResponse
-from app.services.llm_service import generate_response
-from app.core.logging import logger
-from app.metrics.metrics import (
-    REQUEST_COUNTER,
-    REQUEST_LATENCY,
-    CACHE_HIT,
-    CACHE_MISS
+from fastapi import FastAPI
+
+from app.api.routes.generate import router as generate_router
+from app.api.routes.health import router as health_router
+from app.api.routes.metrics import router as metrics_router
+
+from app.api.middleware import add_trace_id
+
+app = FastAPI(
+    title="Inferon",
+    description="LLM Infra Platform",
+    version="1.0.0"
 )
-from prometheus_client import generate_latest
-from fastapi.responses import Response
 
-app = FastAPI(title = "Inferon", description = "LLM Infra Platform", version = "1.0.0")
+app.middleware("http")(add_trace_id)
 
-# ------------ Health Check ------------
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"}
-
-# ------------ Generate Endpoint ------------
-@app.post("/generate", response_model=GenerateResponse)
-async def generate(request: GenerateRequest, http_request: Request):
-    trace_id = http_request.state.trace_id
-
-    start_time = time.time()
-    REQUEST_COUNTER.inc()
-
-    with REQUEST_LATENCY.time():
-        result = await generate_response(
-            request.prompt,
-            trace_id=trace_id
-        )
-
-    latency = time.time() - start_time
-
-    if result.cache_hit:
-        CACHE_HIT.inc()
-    else:
-        CACHE_MISS.inc()
-
-    logger.info({
-        "trace_id": trace_id,
-        "event": "generate",
-        "latency": latency,
-        "cache_hit": result.cache_hit,
-        "prompt_len": len(request.prompt),
-        "response_len": len(result.text)
-    })
-
-    return GenerateResponse(
-        response=result.text,
-        cache_hit=result.cache_hit
-    )
-@app.get("/metrics")
-def metrics():
-    return Response(generate_latest(), media_type="text/plain")
-
-@app.middleware("http")
-async def add_trace_id(request: Request, call_next):
-    trace_id = str(uuid.uuid4())
-
-    # 挂到 request 上（全链路用）
-    request.state.trace_id = trace_id
-    response = await call_next(request)
-
-    # 返回给客户端（很重要）
-    response.headers["X-Trace-ID"] = trace_id
-
-    return response
+app.include_router(generate_router)
+app.include_router(health_router)
+app.include_router(metrics_router)
