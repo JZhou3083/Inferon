@@ -5,7 +5,7 @@ async def send(i):
     async with httpx.AsyncClient() as client:
         r = await client.post(
             "http://localhost:8000/generate",
-            json={"prompt": f"test {i}"}
+            json={"prompt": f"slow reasoning test"}
         )
         print(i, r.status_code)
 
