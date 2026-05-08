@@ -300,3 +300,6 @@ evals/ → eval framework
 7. caching/
 8. rag/
 9. integrations/
+
+
+接下来需要想想怎么分开 control pane 和execution， 然后把concurrency控制加回去-比如semaphore类似的东西
