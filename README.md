@@ -20,23 +20,21 @@ It is designed to serve as a shared backend for multiple applications requiring:
 ## 🏗 Architecture
 
 ```
-Clients (Apps)
-   │
-   ├── App A
-   ├── App B
-   └── App C
-        │
-        ▼
-LLM Infra Platform (this project)
-        │
-        ├── API Layer (FastAPI)
-        ├── Observability Layer(logging, metrics)
-        ├── Optimization Layer (cache)
-        ├── Inference Layer
-        └── Future: Agent + Distributed Layer 
-        │
-        ▼
-LLM Provider (OpenAI/local/vLLM)
+API Layer
+(app/api)
+    ↓
+Orchestration Layer
+(orchestration/in_flight.py)
+    ↓
+Routing Layer
+(routing/router.py)
+    ↓
+Provider Layer
+(providers/)
+    ↓
+External LLMs
+    ↓
+Observability + Cache (side systems)
 ```
 
 ---
@@ -44,31 +42,38 @@ LLM Provider (OpenAI/local/vLLM)
 ## 📦 Project Structure
 
 ```
-llm-infra-platform/
-│
-├── app/
-│   ├── api/                # FastAPI routes (entry point)
-        (main.py)
-│   ├── core/               # config, logging, utilities
-        (logging.py)
-│   ├── services/           # LLM interaction logic
-        (llm_service.py, in_flight.py)
-│   ├── metrics/            # Observability metrics 
-        (metrics.py)
-│   ├── cache/              # caching layer (Redis)
-        (redis_cache.py)
-│   └── schemas/             # request/response schemas
-        (api.py,llm_service.py)
-│
-├── tests/                  # unit & integration tests
-│
-├── docker/                 # Docker-related configs
-│
-├── .github/workflows/      # CI/CD pipelines
-│
-├── docker-compose.yml      # local orchestration (app + Redis)
-│
-└── README.md
+Inferon/
+├── README.md
+├── app
+│   └── api
+│       ├── main.py
+│       ├── middleware.py
+│       └── routes
+│           ├── chat.py
+│           ├── generate.py
+│           ├── health.py
+│           └── metrics.py
+├── cache
+│   └── redis_cache.py
+├── docker-compose.yml
+├── dockerfile
+├── observability
+│   ├── logging.py
+│   └── metrics.py
+├── orchestration
+│   └── in_flight.py
+├── providers
+│   ├── base.py
+│   └── deepseek.py
+├── requirements.txt
+├── schemas
+│   ├── api
+│   │   └── generate.py
+│   └── internal
+│       └── chat.py
+└── tests
+    └── test_concurrency.py
+
 ```
 
 ---
