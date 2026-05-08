@@ -56,14 +56,14 @@ Inferon/
 │   └── redis_cache.py
 ├── docker-compose.yml
 ├── dockerfile
+├── llms
+│   ├── base.py
+│   └── deepseek.py
 ├── observability
 │   ├── logging.py
 │   └── metrics.py
 ├── orchestration
 │   └── in_flight.py
-├── providers
-│   ├── base.py
-│   └── deepseek.py
 ├── requirements.txt
 ├── routing
 │   └── router.py
@@ -74,7 +74,6 @@ Inferon/
 │       └── chat.py
 └── tests
     └── test_concurrency.py
-
 ```
 
 ---
