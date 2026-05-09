@@ -48,14 +48,14 @@ Inferon/
 ├── dockerfile
 ├── gateway
 │   └── api
-├── inferon
+├── inferon #逻辑
 │   ├── cache
 │   ├── llms
 │   ├── observability
 │   ├── orchestration
 │   ├── routing
 │   └── schemas
-├── infra
+├── infra # 实际工具
 ├── requirements.txt
 └── tests
 ```
@@ -285,5 +285,5 @@ evals/ → eval framework
 8. rag/
 9. integrations/
 
-refactor搞定了
+refactor搞定了, infra/ 保留用来以后放第三方，inferon里面放的应该是调用逻辑，infra里面放的是工具
 接下来需要想想把concurrency控制加回去-可以先加semaphore类似的东西
