@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 
-from app.api.routes.generate import router as generate_router
-from app.api.routes.health import router as health_router
-from app.api.routes.metrics import router as metrics_router
+from gateway.api.routes.generate import router as generate_router
+from gateway.api.routes.health import router as health_router
+from gateway.api.routes.metrics import router as metrics_router
 
-from app.api.middleware import add_trace_id
+from gateway.api.middleware import add_trace_id
 
 app = FastAPI(
     title="Inferon",

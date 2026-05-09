@@ -44,36 +44,20 @@ Observability + Cache (side systems)
 ```
 Inferon/
 ├── README.md
-├── app
-│   └── api
-│       ├── main.py
-│       ├── middleware.py
-│       └── routes
-│           ├── generate.py
-│           ├── health.py
-│           └── metrics.py
-├── cache
-│   └── redis_cache.py
 ├── docker-compose.yml
 ├── dockerfile
-├── llms
-│   ├── base.py
-│   └── deepseek.py
-├── observability
-│   ├── logging.py
-│   └── metrics.py
-├── orchestration
-│   └── in_flight.py
+├── gateway
+│   └── api
+├── inferon
+│   ├── cache
+│   ├── llms
+│   ├── observability
+│   ├── orchestration
+│   ├── routing
+│   └── schemas
+├── infra
 ├── requirements.txt
-├── routing
-│   └── router.py
-├── schemas
-│   ├── api
-│   │   └── generate.py
-│   └── internal
-│       └── chat.py
 └── tests
-    └── test_concurrency.py
 ```
 
 ---
@@ -301,5 +285,5 @@ evals/ → eval framework
 8. rag/
 9. integrations/
 
-
-接下来需要想想怎么分开 control pane 和execution， 然后把concurrency控制加回去-比如semaphore类似的东西
+refactor搞定了
+接下来需要想想把concurrency控制加回去-可以先加semaphore类似的东西

@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Request
 import time
-from schemas.api.generate import GenerateRequest, GenerateResponse
-from routing.router import Router
-from orchestration.executor import execute
-from observability.logging import logger
-from observability.metrics import (
+from inferon.schemas.api.generate import GenerateRequest, GenerateResponse
+from inferon.routing.router import Router
+from inferon.orchestration.executor import execute
+from inferon.observability.logging import logger
+from inferon.observability.metrics import (
     REQUEST_COUNTER,
     REQUEST_LATENCY,
     CACHE_HIT,

@@ -1,4 +1,4 @@
-from llms.deepseek import DeepSeekLLM
+from inferon.llms.deepseek import DeepSeekLLM
 
 
 class Router:

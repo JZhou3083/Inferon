@@ -7,21 +7,21 @@ from tenacity import (
     retry_if_exception_type,
 )
 
-from cache.redis_cache import (
+from inferon.cache.redis_cache import (
     get_cache,
     set_cache,
     build_cache_key,
 )
 
-from orchestration.in_flight import (
+from inferon.orchestration.in_flight import (
     get_or_create,
     resolve,
     fail,
 )
 
-from observability.logging import logger
+from inferon.observability.logging import logger
 
-from schemas.internal.chat import LLMResult
+from inferon.schemas.internal.chat import LLMResult
 
 
 # ----------------------------------------

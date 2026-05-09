@@ -2,7 +2,7 @@ import asyncio
 
 from openai import AsyncOpenAI
 
-from llms.base import BaseLLM
+from inferon.llms.base import BaseLLM
 
 
 class DeepSeekLLM(BaseLLM):
