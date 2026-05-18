@@ -9,7 +9,7 @@ _in_flight: dict[str, asyncio.Future] = {}
 _lock = asyncio.Lock()
 
 
-async def get_or_create(key: str) -> asyncio.Future:
+async def get_or_create(key: str,timeout: float = 30.0) -> asyncio.Future:
     """
     Returns existing in-flight future if present,
     otherwise creates and registers a new future.
@@ -27,6 +27,16 @@ async def get_or_create(key: str) -> asyncio.Future:
         future = loop.create_future()
 
         _in_flight[key] = future
+
+        async def _cleanup():
+            try:
+                await asyncio.sleep(timeout)
+                if not future.done():
+                    fail(key, TimeoutError(f"In-flight request timeout after {timeout}s"))
+            except asyncio.CancelledError:
+                pass
+        
+        asyncio.create_task(_cleanup())
 
         return future
 
