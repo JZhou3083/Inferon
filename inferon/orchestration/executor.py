@@ -20,17 +20,13 @@ from inferon.orchestration.in_flight import (
 )
 
 from inferon.observability.logging import logger
-
 from inferon.schemas.internal.chat import LLMResult
-
 
 # ----------------------------------------
 # concurrency protection
 # ----------------------------------------
 
 SEMAPHORE = asyncio.Semaphore(5)
-
-
 # ----------------------------------------
 # retry wrapper
 # ----------------------------------------
@@ -56,7 +52,6 @@ async def _execute_with_retry(
 # ----------------------------------------
 # public executor API
 # ----------------------------------------
-
 async def execute(
     *,
     provider,
